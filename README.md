@@ -268,6 +268,26 @@ flutter upgrade
 
 ---
 
+## Screenshot Aplikasi
+
+### Onboarding 1
+<img src="assets/Onboarding_1.jpeg" width="250"/>
+
+### Onboarding 2
+<img src="assets/Onbarding_2.jpeg" width="250"/>
+
+### Onboarding 3
+<img src="assets/Onboarding_3.jpeg" width="250"/>
+
+### Tema
+<img src="assets/Tema.jpeg" width="250"/>
+
+### Survey Card 1
+<img src="assets/Survey_card.jpeg" width="250"/>
+
+### Survey Card 2
+<img src="assets/SurveyCard.jpeg" width="250"/>
+
 ## 🤝 Kontribusi
 
 1. Fork repository ini
