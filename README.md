@@ -274,7 +274,7 @@ flutter upgrade
 <img src="assets/Onboarding_1.jpeg" width="250"/>
 
 ### Onboarding 2
-<img src="assets/Onbarding_2.jpeg" width="250"/>
+<img src="assets/Onboarding_2.jpeg" width="250"/>
 
 ### Onboarding 3
 <img src="assets/Onboarding_3.jpeg" width="250"/>
