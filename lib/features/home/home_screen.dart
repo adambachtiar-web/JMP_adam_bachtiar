@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../data/repositories/store_repository.dart';
 import '../../data/repositories/survey_repository.dart';
 import '../../widgets/network_status_chip.dart';
+import '../../widgets/survey_card.dart';
+
 import '../about/about_screen.dart';
 import '../stores/daftar_toko_screen.dart';
 import '../stores/form_toko_screen.dart';
@@ -34,12 +37,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
+
     final prefs = await SharedPreferences.getInstance();
     final totalToko = await _storeRepo.count();
     final totalKunjungan = await _surveyRepo.countThisMonth();
+
     if (!mounted) return;
+
     setState(() {
-      _namaPetugas = prefs.getString(AppConstants.keyLoggedInNama) ?? '';
+      _namaPetugas =
+          prefs.getString(AppConstants.keyLoggedInNama) ?? '';
       _totalToko = totalToko;
       _totalKunjunganBulanIni = totalKunjungan;
       _isLoading = false;
@@ -55,7 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
           const NetworkStatusChip(),
           IconButton(
             icon: const Icon(Icons.info_outline),
-            tooltip: 'Tentang',
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const AboutScreen()),
@@ -63,30 +69,42 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+
       body: RefreshIndicator(
         onRefresh: _loadData,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // ── Salam ─────────────────────────────────────
+
+            // ── HEADER ─────────────────────────────
             Text(
               'Selamat datang,',
-              style: TextStyle(fontSize: 14, color: AppTheme.textSecondary),
+              style: TextStyle(
+                fontSize: 14,
+                color: AppTheme.textSecondary,
+              ),
             ),
+
             Text(
               _namaPetugas,
               style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textPrimary,
+              ),
             ),
+
             Text(
               DateFormatter.toLongDisplay(DateFormatter.todayDb()),
-              style: TextStyle(fontSize: 13, color: AppTheme.textSecondary),
+              style: TextStyle(
+                fontSize: 13,
+                color: AppTheme.textSecondary,
+              ),
             ),
+
             const SizedBox(height: 24),
 
-            // ── Ringkasan Statistik ────────────────────────
+            // ── STAT CARD ──────────────────────────
             Row(
               children: [
                 Expanded(
@@ -101,24 +119,68 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _StatCard(
                     icon: Icons.assignment_turned_in,
-                    label: 'Kunjungan\nBulan Ini',
-                    value: _isLoading ? '...' : '$_totalKunjunganBulanIni',
+                    label: 'Kunjungan',
+                    value: _isLoading
+                        ? '...'
+                        : '$_totalKunjunganBulanIni',
                     color: AppTheme.accent,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 28),
 
-            // ── Tombol Aksi ───────────────────────────────
+            const SizedBox(height: 24),
+
+            // ── SURVEY CARD ─────────────────────────
+            const Text(
+              'Daftar Survey',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textPrimary,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            const SurveyCard(
+              title: "Survey Toko A",
+              subtitle: "Jl. Sudirman No.10",
+              status: SurveyStatus.berjalan,
+            ),
+
+            const SurveyCard(
+              title: "Survey Toko B",
+              subtitle: "Jl. Thamrin No.5",
+              status: SurveyStatus.selesai,
+            ),
+
+            const SurveyCard(
+              title: "Survey Toko C",
+              subtitle: "Belum dimulai",
+              status: SurveyStatus.belumDimulai,
+            ),
+
+            const SurveyCard(
+              title: "Survey Toko D",
+              subtitle: "Data bermasalah",
+              status: SurveyStatus.bermasalah,
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── AKSI CEPAT ─────────────────────────
             const Text(
               'Aksi Cepat',
               style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.textPrimary),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textPrimary,
+              ),
             ),
+
             const SizedBox(height: 12),
+
             _ActionButton(
               icon: Icons.store_mall_directory_outlined,
               label: 'Lihat Daftar Toko',
@@ -126,12 +188,16 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () async {
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const DaftarTokoScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const DaftarTokoScreen(),
+                  ),
                 );
                 _loadData();
               },
             ),
+
             const SizedBox(height: 10),
+
             _ActionButton(
               icon: Icons.add_business_outlined,
               label: 'Tambah Toko Baru',
@@ -139,7 +205,9 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () async {
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const FormTokoScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const FormTokoScreen(),
+                  ),
                 );
                 _loadData();
               },
@@ -151,6 +219,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+// ─────────────────────────────────────────────
+// STAT CARD (FIXED CLASS)
+// ─────────────────────────────────────────────
 class _StatCard extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -173,7 +244,7 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.3),
+            color: color.withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -187,16 +258,27 @@ class _StatCard extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-                fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-          Text(label,
-              style: const TextStyle(fontSize: 12, color: Colors.white70)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.white70,
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
+// ─────────────────────────────────────────────
+// ACTION BUTTON (FIXED CLASS)
+// ─────────────────────────────────────────────
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -216,14 +298,27 @@ class _ActionButton extends StatelessWidget {
       margin: EdgeInsets.zero,
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppTheme.primary.withValues(alpha: 0.1),
+          backgroundColor: AppTheme.primary.withOpacity(0.1),
           child: Icon(icon, color: AppTheme.primary),
         ),
-        title: Text(label,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-        subtitle: Text(subtitle,
-            style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
-        trailing: const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
+        title: Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(
+            fontSize: 12,
+            color: AppTheme.textSecondary,
+          ),
+        ),
+        trailing: const Icon(
+          Icons.chevron_right,
+          color: AppTheme.textSecondary,
+        ),
         onTap: onTap,
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import '../core/theme/app_theme.dart'; // pastikan path sesuai project kamu
 
 class NetworkStatusChip extends StatefulWidget {
   const NetworkStatusChip({super.key});
@@ -47,31 +48,46 @@ class _NetworkStatusChipState extends State<NetworkStatusChip> {
     }
   }
 
-  Color get _color {
+  Color get _iconColor {
     switch (_status) {
       case ConnectivityResult.wifi:
-        return const Color(0xFF2E7D32);
+        return AppTheme.networkWifi;
       case ConnectivityResult.mobile:
-        return const Color(0xFF1565C0);
+        return AppTheme.networkMobile;
       default:
-        return const Color(0xFFD32F2F);
+        return AppTheme.networkOffline;
     }
+  }
+
+  Color get _bgColor {
+    return AppTheme.networkBadgeBg;
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 4),
-      child: Chip(
-        avatar: Icon(_icon, size: 14, color: Colors.white),
-        label: Text(
-          _label,
-          style: const TextStyle(
-              fontSize: 11, color: Colors.white, fontWeight: FontWeight.w600),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: _bgColor,
+          borderRadius: BorderRadius.circular(8),
         ),
-        backgroundColor: _color,
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        visualDensity: VisualDensity.compact,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(_icon, size: 14, color: _iconColor),
+            const SizedBox(width: 4),
+            Text(
+              _label,
+              style: TextStyle(
+                fontSize: 11,
+                color: _iconColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
